@@ -1,0 +1,51 @@
+---
+title: "ridgeRegression"
+author: "Yueying Hu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ridgeRegression}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+require(bench)
+require(MASS)
+library(ridgeRegression)
+set.seed(123)
+```
+
+This document introduces you to the package ridgeRegression, and shows you how
+to apply them to real data sets. 
+
+## Simulated data
+To explore the application of ridgeRegression, we'll generate a random dataset.
+The design matrix contains 100 rows and 20 columns, and the response vector 
+contains 100 elements. We'll first use a single value of lambda to compare the 
+function with MPSS::lm.ridge to demonstrate the correctness and efficiency.
+
+```{r}
+x <- matrix(rnorm(100 * 20), 100, 20)
+y <- rnorm(100)
+fit <- ridgeRegression(x, y, 0.5)
+fit_standard <- lm.ridge(scale(y, T, T)~scale(x, T, T) -1, lambda = 0.5 * 100 / 99)
+all.equal(as.vector(fit$`0.5`), as.vector(coef(fit_standard)))
+```
+
+```{r}
+result = bench::mark(ridgeRegression(x, y, 0.5),
+                     lm.ridge(scale(y, T, T)~scale(x, T, T) - 1, lambda = 0.5*100/99), 
+                     check=FALSE)
+print(result)
+```
+
+It shows that our implementation is correct in manual computation of ridge regressors, without considering intercept term and performs standard scaling only. Also, by using Cholesky decomposition, our implementation is faster than the lm.ridge function from MASS.
+
+```{r}
+fit1 <- ridgeRegression(x, y, seq(0, 1, 0.1))
+fit1$`0.2`
+```
+If we input a vector of lambdas, we can easily retrieve the coefficients by indexing the specific lambda.
