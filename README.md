@@ -1,5 +1,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/yueyingh/biostat625-hw3/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yueyingh/biostat625-hw3/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/yueyingh/biostat625-hw3/branch/main/graph/badge.svg)](https://app.codecov.io/gh/yueyingh/biostat625-hw3?branch=main)
 <!-- badges: end -->
 ## Overview
 ridgeRegression is a fast implementation for multiple linear regression with L2 regularization. It includes no intercept term, and it performs column scaling for the design matrix and response vector. Mathematically, we consider a multiple linear regression:
